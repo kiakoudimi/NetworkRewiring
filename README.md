@@ -1,6 +1,6 @@
 # NetworkRewiring
 
-**NetworkRewiring**: R package for quantiying pathway perturbations in gene co-expression networks. 
+R package for quantiying pathway perturbations in gene co-expression networks. 
 
 ## Features
 
