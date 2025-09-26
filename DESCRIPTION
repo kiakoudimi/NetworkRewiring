@@ -1,0 +1,16 @@
+Package: NetworkRewiring
+Type: Package
+Title: Quantifying pathway perturbations through gene network rewiring
+Version: 0.1.0
+Authors@R: c(
+    person("Dimitra", "Kiakou", email = "kiakoudimitra@gmail.com", role = c("aut", "cre")),
+    person("Margarita", "Zachariou", role = c("aut")),
+    person("Marilena", "Bourdakou", role = c("aut")),
+    person("George", "Spyrou", role = c("aut")),
+    person("Theodoros", "Kyprianou", role = c("aut")),
+  )
+Description: A package for implementing gene co-expression network rewiring using pathway specific networks.
+License: 
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.3
