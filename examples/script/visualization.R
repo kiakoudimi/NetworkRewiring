@@ -99,7 +99,7 @@ plot_statistics <- function(
 
 # Figure 2A
 #==========================================================================================================
-
+# For GSE48080
 plot_statistics(
   files = c(
     "data/KEGG/statistics_score_metrics_survivors_1_7_GSE48080.RData",
@@ -122,7 +122,7 @@ plot_statistics(
   colors = c("snow4", "violetred")
 )
 
-
+# For GSE54514
 plot_statistics(
   files = c(
     "data/KEGG/statistics_score_metrics_control_1_5_GSE54514.RData",
@@ -147,7 +147,7 @@ plot_statistics(
   colors = c("yellowgreen", "snow4", "violetred")
 )
 
-
+# For GSE95233
 plot_statistics(
   files = c(
     "data/KEGG/statistics_score_metrics_survivors_1_2_GSE95233.RData",
@@ -160,6 +160,7 @@ plot_statistics(
   output_file = "GSE95233_KEGG_stat.svg",
   colors = c("snow4","snow4", "violetred", "violetred")
 )
+
 plot_statistics(
   files = c(
     "data/GO/statistics_score_metrics_survivors_1_2_GSE95233.RData",
@@ -178,24 +179,22 @@ plot_statistics(
 # Load data KEGG
 #==========================================================================================================
 
-datawd = '/data/pt_02106/dimitra/Analyses/Privat/Repository/test'
-main_dir <- paste0(datawd, "/GSE54514/KEGG")
+main_dir <- paste0(path_to_data, "/GSE54514/KEGG")
 load_rdata_from_subdirectories(main_dir)
 
 score_metrics_survivors_1_2_gse54514 <- score_metrics_survivors_1_2
 score_metrics_survivors_1_3_gse54514 <- score_metrics_survivors_1_3
 `score_metrics_non-survivors_1_2_gse54514` <- `score_metrics_non-survivors_1_2`
 `score_metrics_non-survivors_1_3_gse54514` <- `score_metrics_non-survivors_1_3`
-main_dir <- paste0(datawd, "/GSE48080/KEGG")
+main_dir <- paste0(path_to_data, "/GSE48080/KEGG")
 load_rdata_from_subdirectories(main_dir)
 
-main_dir <- paste0(datawd, "/GSE95233/KEGG")
+main_dir <- paste0(path_to_data, "/GSE95233/KEGG")
 load_rdata_from_subdirectories(main_dir)
 
 # Load data GO
 #==========================================================================================================
-datawd = '/data/pt_02106/dimitra/Analyses/Privat/Repository/test'
-main_dir <- paste0(datawd, "/GSE54514/GO")
+main_dir <- paste0(path_to_data, "/GSE54514/GO")
 load_rdata_from_subdirectories(main_dir)
 
 score_metrics_survivors_1_2_gse54514 <- score_metrics_survivors_1_2
@@ -203,10 +202,10 @@ score_metrics_survivors_1_3_gse54514 <- score_metrics_survivors_1_3
 `score_metrics_non-survivors_1_2_gse54514` <- `score_metrics_non-survivors_1_2`
 `score_metrics_non-survivors_1_3_gse54514` <- `score_metrics_non-survivors_1_3`
 
-main_dir <- paste0(datawd, "/GSE48080/GO")
+main_dir <- paste0(path_to_data, "/GSE48080/GO")
 load_rdata_from_subdirectories(main_dir)
 
-main_dir <- paste0(datawd, "/GSE95233/GO")
+main_dir <- paste0(path_to_data, "/GSE95233/GO")
 load_rdata_from_subdirectories(main_dir)
 
 
