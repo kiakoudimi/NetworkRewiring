@@ -19,21 +19,20 @@ suppressPackageStartupMessages({
 datasets <- c("GSE54514", "GSE95233", "GSE48080")
 databases <- c("KEGG", "GO")
 
-dataset = datasets[2]
-database = databases[2]
+dataset = datasets[1]
+database = databases[1]
 
 output_dir = '/path/to/results'
-wd <- 'path/to/data'
-load(paste(wd, 'datasets',dataset, "data", "ids.RData", sep = "/"))
+load(paste('examples',"data", dataset, "ids.RData", sep = "/"))
 
 # Get database
 #==========================================================================================================
 if(database=="KEGG"){
-  load(paste(wd, 'datasets', "KEGG", "KEGGpathways2024_Entrez.RData", sep = "/"))
+  load(paste('data', "KEGGpathways2024_Entrez.RData", sep = "/"))
   pathways <- pathways2023_Entrez
   rm(pathways2023_Entrez)
 }else{
-  load(paste(wd, 'datasets', "GO","biological_processes.RData", sep = "/"))
+  load(paste('data',"biological_processes.RData", sep = "/"))
   pathways <- processes
   pathways <- subset(pathways, Total > 2 & Total <=500)
   rm(processes)
@@ -49,8 +48,8 @@ if (dataset == "GSE54514") {
   clean_matrix <- prepare_gene_intensities(
     norm = FALSE,
     log = TRUE,
-    series_matrix_file = paste(wd, 'datasets',dataset, "data", "GSE54514_series_matrix.txt", sep = "/"),
-    platform_file = paste(wd, 'datasets',dataset, "data", "GPL6947-13512.txt", sep = "/"),
+    series_matrix_file = paste('examples',"data", dataset, "GSE54514_series_matrix.txt", sep = "/"),
+    platform_file = paste('examples',"data", dataset, "GPL6947-13512.txt", sep = "/"),
     probe_col = "ID",
     symbol_col = "Symbol",
     entrez_col = "Entrez_Gene_ID",
@@ -69,8 +68,8 @@ if (dataset == "GSE54514") {
   clean_matrix <- prepare_gene_intensities(
     norm = FALSE,
     log = TRUE,
-    series_matrix_file = paste(wd, 'datasets',dataset, "data", "GSE95233_series_matrix.txt", sep = "/"),
-    platform_file = paste(wd, 'datasets',dataset, "data", "GPL570-55999.txt", sep = "/"),
+    series_matrix_file = paste('examples',"data", dataset,"GSE95233_series_matrix.txt", sep = "/"),
+    platform_file = paste('examples',"data", dataset, "GPL570-55999.txt", sep = "/"),
     probe_col = "ID",
     symbol_col = "Gene.Symbol",
     entrez_col = "ENTREZ_GENE_ID",
@@ -89,8 +88,8 @@ if (dataset == "GSE54514") {
   clean_matrix <- prepare_gene_intensities(
     norm = FALSE,
     log = TRUE,
-    series_matrix_file = paste(wd, 'datasets',dataset, "data", "GSE48080_series_matrix.txt", sep = "/"),
-    platform_file = paste(wd, 'datasets',dataset, "data", "GPL4133-12599.txt", sep = "/"),
+    series_matrix_file = paste('examples',"data", dataset, "GSE48080_series_matrix.txt", sep = "/"),
+    platform_file = paste('examples',"data", dataset, "GPL4133-12599.txt", sep = "/"),
     probe_col = "ID",
     symbol_col = "GENE_SYMBOL",
     entrez_col = "GENE",
@@ -134,5 +133,7 @@ for (group in possible_groups) {
     run_analysis(net)
   }
 }
+
+
 
 

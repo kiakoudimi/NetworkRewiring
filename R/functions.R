@@ -206,7 +206,6 @@ setMethod("network_construction", "gene_network",
                 exportNetworkToCytoscape(apath2, edgeFile = edgefile2, weighted = TRUE, threshold = 0,
                                          nodeNames = colnames(apath2))
 
-                if (i %% 5 == 0) closeAllConnections()
               }
             }
 
@@ -281,6 +280,7 @@ setMethod("compute_rewiring", "gene_network",
 #' @return A numeric matrix of the same dimensions with or without normalization/log-transform.
 #' @export
 compare_multiple_networks <- function(x,top_mes) {
+
   # Find all nodes in networks
   megenes<-unique(sort(unlist(strsplit(top_mes,"_"))))
   allAdg<-NULL
@@ -336,6 +336,7 @@ compare_multiple_networks <- function(x,top_mes) {
       allAdg[[net]][[g]][is.na(allAdg[[net]][[g]])] <- 0
     }
   }
+
   #compute centroid matrix
   for (g in megenes){
     tmpar<-NULL
@@ -357,7 +358,6 @@ compare_multiple_networks <- function(x,top_mes) {
   }
   colnames(dn_ar)<-names(allAdg)
 
-  # MZ: main difference between cytoscape and R, the sqrt
   dn_ar1<-dn_ar
   dn_scores<-list()
   edges<-data.table(do.call(rbind,strsplit(top_mes,"_")))
@@ -698,7 +698,7 @@ compute_statistics <- function(scores, filename, dataset, output.folder, pathway
 #' @return The function generates output files (edge lists, rewiring scores, and statistics) in the configured \code{output_dir}.
 #' @export
 run_analysis <- function(net) {
-  # Extract settings from net object
+
   dataset <- net@dataset
   database <- net@database
   group <- net@group_name
@@ -716,7 +716,8 @@ run_analysis <- function(net) {
     tp[2]
   ))
   flush.console()
-  # Create subfolders if missing
+
+  # Create subfolders
   edge_dir <- file.path(output_dir, dataset, database, name, "edge_lists")
   dynet_dir <- file.path(output_dir, dataset, database, name, "dynet_score")
 
@@ -730,11 +731,18 @@ run_analysis <- function(net) {
   # Compute rewiring scores
   compute_rewiring(net, edge_dir, filenames)
 
-  # Load dynet scores
+  # Load scores
   score_files <- list.files(dynet_dir, pattern = "\\.txt$", full.names = TRUE)
   score_files <- str_sort(score_files, numeric = TRUE)
   scores <- lapply(score_files, read.table, sep = "\t", stringsAsFactors = FALSE, header = TRUE)
 
+  # Get pathway names
+  if (database == "KEGG") {
+    pathways <- gsub(".*?_\\d+_(.*?) - Homo sapiens \\(human\\)\\.txt", "\\1", basename(score_files))
+  } else if (database == "GO") {
+    pathways <- gsub(".*?_\\d+_(.*?)\\.txt", "\\1", basename(score_files))
+  }
+
   # Compute statistics
-  compute_statistics(scores, name, dataset, file.path(output_dir, dataset, database, name), basename(score_files))
+  compute_statistics(scores, name, dataset, file.path(output_dir, dataset, database, name), pathways)
 }
