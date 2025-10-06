@@ -14,8 +14,7 @@ R package for quantiying pathway perturbations in gene co-expression networks.
 # install.packages("devtools")
 # library(devtools)
 # devtools::install_github("kiakoudimi/NetworkRewiring")
-```r
 
-## License
+License
 
 CC BY-NC 4.0 License
