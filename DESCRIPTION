@@ -7,7 +7,7 @@ Authors@R: c(
     person("Margarita", "Zachariou", role = c("aut")),
     person("Marilena", "Bourdakou", role = c("aut")),
     person("George", "Spyrou", role = c("aut")),
-    person("Theodoros", "Kyprianou", role = c("aut")),
+    person("Theodoros", "Kyprianou", role = c("aut"))
   )
 Description: A package for implementing gene co-expression network rewiring using pathway specific networks.
 License: CC BY-NC 4.0 License
