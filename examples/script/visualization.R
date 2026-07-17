@@ -187,7 +187,7 @@ plot_statistics(
 
 # Load data KEGG
 #==========================================================================================================
-path_to_data='/data/pt_03159/analyses/Nets/Repository/test'
+path_to_data='...'
 main_dir <- paste0(path_to_data, "/GSE54514/KEGG")
 load_rdata_from_subdirectories(main_dir)
 
