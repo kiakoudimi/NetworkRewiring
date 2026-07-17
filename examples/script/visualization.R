@@ -6,6 +6,16 @@ library(dplyr)
 library(ggdist)
 library(reshape2)
 
+library(clusterProfiler)
+library(enrichplot)
+library(readxl)
+
+library(purrr)
+library(stringr)
+library(tidyr)
+library(org.Hs.eg.db)
+library(AnnotationDbi)
+
 #Functions
 #==========================================================================================================
 
@@ -18,7 +28,7 @@ load_rdata_from_subdirectories <- function(main_dir) {
     rdata_files <- list.files(sub_dir, pattern = "\\.RData$", full.names = TRUE)
 
     for (file in rdata_files) {
-      load(file, envir = .GlobalEnv)  # Load the .RData file into the environment
+      load(file, envir = .GlobalEnv)
       cat("Loaded:", file, "\n")
     }
   }
@@ -95,7 +105,6 @@ plot_statistics <- function(
     return(p)
   }
 }
-
 
 # Figure 2A
 #==========================================================================================================
@@ -178,7 +187,7 @@ plot_statistics(
 
 # Load data KEGG
 #==========================================================================================================
-
+path_to_data='/data/pt_03159/analyses/Nets/Repository/test'
 main_dir <- paste0(path_to_data, "/GSE54514/KEGG")
 load_rdata_from_subdirectories(main_dir)
 
@@ -342,7 +351,7 @@ heatmap_data_melted <- melt(heatmap_data, id.vars = "Pathway")
 
 # Get colors
 jet.colors <- function(n) {
-  colorRampPalette(c("#86d780", "#ffea70", "coral", 'red'))(n)
+  colorRampPalette(c("#fff2a8","#d95f02","#b24a6b", "deeppink4", "#2b0033"))(n)
 }
 
 # Plot heatmap
@@ -359,10 +368,36 @@ p <- ggplot(heatmap_data_melted, aes(x = variable, y = Pathway, fill = value)) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12),
         axis.text.y = element_text(size = 8))
 p
-ggsave("heatmap_plot_top10_GO.svg", plot = p, device = "svg", width = 8, height = 11)
+
+p <- ggplot(heatmap_data_melted,
+            aes(x = variable, y = Pathway)) +
+  geom_point(
+    aes(size = value, color = value),
+    shape = 16, alpha = 0.85
+  ) +
+  scale_color_gradientn(
+    colors = jet.colors(100),
+    na.value = "white"
+  ) +
+  scale_size(
+    range = c(1, 7),   # controls bubble size
+    guide = "none"     # hide size legend if redundant
+  ) +
+  theme_minimal() +
+  labs(x = "", y = "Pathways", color = "Median score") +
+  theme(
+    panel.grid = element_blank(),
+    axis.text.x = element_text(angle = 90, hjust = 1, size = 12),
+    axis.text.y = element_text(size = 8)
+  )
+
+p
+
+
+ggsave("heatmap_plot_top10_GO.svg", plot = p, device = "svg", width = 9.5, height = 11)
 library(writexl)
 
-write_xlsx(heatmap_data_melted, "heatmap_data_GO.xlsx")
+write_xlsx(heatmap_data_melted, "heatmap_data_GO_21_03_2026.xlsx")
 
 # Figure 4
 #==========================================================================================================
@@ -410,3 +445,123 @@ ggplot(summary_df_go, aes(x = day_comparison, y = median_of_medians)) +
   ) +
   theme_minimal()
 ggsave("median_of_medians_plot_GO.svg", device = "svg", width = 6, height = 4)
+
+
+
+# Gene-level perturbations
+#==========================================================================================================
+ns_list <- mget(ls(pattern = "score_metrics_non-survivors_1_(5|3|7)$"))
+s_list  <- mget(ls(pattern = "score_metrics_survivors_1_(5|3|7)$"))
+
+ns_genes <- unlist(lapply(ns_list, function(df) {unlist(strsplit(df$`Top 5% Genes`, ","))}))
+s_genes <- unlist(lapply(s_list, function(df) {unlist(strsplit(df$`Top 5% Genes`, ","))}))
+
+ns_table <- sort(table(ns_genes), decreasing = TRUE)
+s_table  <- sort(table(s_genes), decreasing = TRUE)
+
+all_genes <- union(names(ns_table), names(s_table))
+
+combined <- data.frame(
+  Entrez_ID = all_genes,
+  NS_freq = as.numeric(ns_table[all_genes]),
+  S_freq  = as.numeric(s_table[all_genes])
+)
+
+combined$Symbol <- mapIds(
+  org.Hs.eg.db,
+  keys = combined$Entrez_ID,
+  column = "SYMBOL",
+  keytype = "ENTREZID",
+  multiVals = "first"
+)
+combined <- combined[, c("Entrez_ID", "Symbol", "NS_freq", "S_freq")]
+
+write_xlsx(combined, "pathway_freq_top5%_genes_KEGG_24_03_2026.xlsx")
+
+
+# Pathway enrichment analysis
+#==========================================================================================================
+#KEGG
+gene_freq <- read_excel("results/pathway_freq_top5%_genes_KEGG_24_03_2026.xlsx")
+load("NetworkRewiring/data/KEGGpathways2024_Entrez.RData")
+pathways <- pathways2023_Entrez
+rm(pathways2023_Entrez)
+
+term2gene <- pathways[,-2] %>%
+  mutate(Pathway = sub(" - Homo sapiens \\(human\\)$", "", .[[1]])) %>%
+  pivot_longer(cols = -Pathway, values_to = "gene") %>%
+  filter(!is.na(gene)) %>%
+  select(Pathway, gene)
+
+#GO
+gene_freq <- read_excel("results/pathway_freq_top5%_genes_GO_24_03_2026.xlsx")
+load("NetworkRewiring/data/biological_processes.RData")
+pathways <- processes
+pathways <- subset(pathways, Total > 2 & Total <=500)
+rm(processes)
+
+term2gene <- pathways[,-c(1,3)] %>%
+  pivot_longer(cols = -Process, values_to = "gene") %>%
+  filter(!is.na(gene)) %>%
+  select(Process, gene)
+
+#Run OVA
+percentile <- 0.9
+
+ns_thresh <- quantile(gene_freq$NS_freq, percentile, na.rm = TRUE)
+s_thresh <- quantile(gene_freq$S_freq, percentile, na.rm = TRUE)
+
+ns_genes <- gene_freq$Entrez_ID[gene_freq$NS_freq >= ns_thresh]
+s_genes <- gene_freq$Entrez_ID[gene_freq$S_freq >= s_thresh]
+
+common_genes <- intersect(ns_genes, s_genes)
+unique_ns <- setdiff(ns_genes, s_genes)
+unique_s  <- setdiff(s_genes, ns_genes)
+
+res_ns <- enricher(unique_ns, TERM2GENE = term2gene)
+res_s  <- enricher(unique_s,  TERM2GENE = term2gene)
+res_common <- enricher(common_genes, TERM2GENE = term2gene)
+
+library(patchwork)
+
+p1 <- dotplot(res_s, showCategory = 10) + ggtitle('Survivors')+
+  set_enrichplot_color(type='fill', transform='log10', colors=c("#2b0033","deeppink4", "#b24a6b", 'bisque'))
+p2 <- dotplot(res_ns, showCategory = 10)+ ggtitle('Non-Survivors')+
+  set_enrichplot_color(type='fill', transform='log10', colors=c("#2b0033","deeppink4", "#b24a6b", 'bisque'))
+p3 <- dotplot(res_common, showCategory = 10)+ ggtitle('Shared')+
+  set_enrichplot_color(type='fill', transform='log10', colors=c("#2b0033","deeppink4", "#b24a6b", 'bisque'))
+
+(p1 + p2+ p3) + plot_layout(ncol = 3, guides = "collect") &
+  theme(legend.position = "bottom",axis.title.y = element_blank())
+ggsave("dotplot_KEGG.svg", scale=1.3,width = 14, height = 5, device = "svg")
+
+# Enrichment map
+res_common2 <- pairwise_termsim(res_common)
+res_s2 <- pairwise_termsim(res_s)
+res_ns2 <- pairwise_termsim(res_ns)
+
+ssplot(res_common2, nCluster = 5,node_label = "category", min_edge = 0.3)  +
+  theme_void() +theme(legend.position = "bottom")+guides(size = "none",group = "none", fill='none' )+
+  scale_x_continuous(expand = expansion(mult = 0.4)) +
+  scale_y_continuous(expand = expansion(mult = 0.4))+
+  set_enrichplot_color(type='color', transform='log10', colors=c("#2b0033","deeppink4", "#b24a6b", 'bisque'))
+
+ggsave("ssplot_shared_KEGG.svg", scale=0.9,width = 15, height = 14, device = "svg")
+
+
+# Heatplot
+geneList_df_s <- gene_freq[gene_freq[[1]] %in% s_genes, ]
+geneList_s<-geneList_df_s$S_freq
+names(geneList_s) <- geneList_df_s[[1]]
+
+geneList_df_ns <- gene_freq[gene_freq[[1]] %in% ns_genes, ]
+geneList_ns<-geneList_df_ns$NS_freq
+names(geneList_ns) <- geneList_df_ns[[1]]
+rm(geneList_df_ns, geneList_df_s)
+
+res_s2_symbol <- setReadable(res_s2, 'org.Hs.eg.db', 'ENTREZID')
+res_ns2_symbol <- setReadable(res_ns2, 'org.Hs.eg.db', 'ENTREZID')
+p1 <-heatplot(res_s2_symbol, foldChange=geneList_s, showCategory=5)
+p2 <-heatplot(res_ns2_symbol, foldChange=geneList_ns, showCategory=5)
+p1 + p2 + plot_layout(ncol = 1)
+ggsave("heatplot_s_ns_KEGG.svg", scale=1.05,width = 23, height = 5, device = "svg")

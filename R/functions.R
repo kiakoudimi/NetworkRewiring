@@ -648,6 +648,9 @@ compute_statistics <- function(scores, filename, dataset, output.folder, pathway
 
     #Top 5% of Scores
     top<-which(path$score_cor_cyto>quantile(path$score_cor_cyto, probs = c(0.95)))
+    if(length(top) == 0){
+      top <- seq_len(nrow(path))
+    }
     top<-path[c(top), c("gene","score_cor_cyto")]
     gtop<-paste(top$gene, collapse = ",")
     stop<-paste(top$score_cor_cyto, collapse = ",")
