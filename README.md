@@ -64,6 +64,7 @@ The `examples/scripts/` folder includes three scripts as:
 
 Estimated edge lists, rewiring scores and statistical summaries will be exported in:
 ​
+
 ```<output_dir>/<dataset>/<database>/<group_name><timepoint1><timepoint2>​```
 
 inlcuding the folders edge_lists, dynet_score, and an .RData file with statistical summary. 
