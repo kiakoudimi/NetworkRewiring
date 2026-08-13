@@ -17,9 +17,9 @@ devtools::install_github("kiakoudimi/NetworkRewiring")
 
 ## Quick start
 
-Piepline overview:
+Pipeline overview:
 
-1. Prepare a gene expression data (e.g. normalize, log2-transform)
+1. Prepare a gene expression data matrix (e.g. normalize, log2-transform)
 2. Construct an object describing the data, group and time points.
 3. Call `run_analysis()` to estimate gene co-expression networks, gene rewiring, and pathway-specific statistical summaries over their gene rewiring members.
 
@@ -62,7 +62,9 @@ The `examples/scripts/` folder includes three scripts as:
 
 ### Output 
 
-Estimated edge lists, rewiring scores and statistical summaries will be exported in <output_dir>/<dataset>/<database>/<group_name><timepoint1><timepoint2> inlcuding the folders edge_lists, dynet_score, and an .RData file with statistical summary. 
+Estimated edge lists, rewiring scores and statistical summaries will be exported in:
+<output_dir>/<dataset>/<database>/<group_name><timepoint1><timepoint2> 
+inlcuding the folders edge_lists, dynet_score, and an .RData file with statistical summary. 
 
 ## License
 
