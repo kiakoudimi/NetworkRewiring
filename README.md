@@ -6,7 +6,7 @@ R package for quantiying pathway perturbations in gene co-expression networks be
 
 - Preprocessing gene co-expression data.
 - Compute gene co-expression networks defined as pathway specific biological processes obtained from KEGG and GO databases.
-- Compute network rewiring scores and generate pathway specific summary statistics (indicating pathway perturbations).
+- Compute network rewiring scores and generate pathway specific summary statistics (as a pathway perturbation proxy).
 
 ## Installation
 
@@ -63,7 +63,9 @@ The `examples/scripts/` folder includes three scripts as:
 ### Output 
 
 Estimated edge lists, rewiring scores and statistical summaries will be exported in:
-`<output_dir>/<dataset>/<database>/<group_name><timepoint1><timepoint2>`
+​
+```<output_dir>/<dataset>/<database>/<group_name><timepoint1><timepoint2>​```
+
 inlcuding the folders edge_lists, dynet_score, and an .RData file with statistical summary. 
 
 ## License
