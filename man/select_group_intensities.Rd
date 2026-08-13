@@ -2,13 +2,13 @@
 % Please edit documentation in R/functions.R
 \name{select_group_intensities}
 \alias{select_group_intensities}
-\title{Generic for select_group_intensities}
+\title{Extract intensities for a group, matched across time points}
 \usage{
 select_group_intensities(object, ...)
 }
 \arguments{
-\item{object}{An object}
+\item{object}{A \code{gene_network} object.}
 }
 \description{
-Generic for select_group_intensities
+Extract intensities for a group, matched across time points
 }

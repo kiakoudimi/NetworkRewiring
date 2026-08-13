@@ -13,5 +13,5 @@
 A list with two matrices: gene intensities for time_1 and time_2.
 }
 \description{
-Extract gene intensities for a given group across two timepoints.
+Extract gene intensities for a given group across two time points.
 }

@@ -18,14 +18,14 @@ Run the full network analysis pipeline
 \details{
 The pipeline performs the following steps:
 \enumerate{
-  \item Extracts settings (dataset, database, group, timepoints, labels).
-  \item Creates output directories if they do not exist.
-  \item Constructs networks for the specified group and timepoints via
-    \code{\link{network_construction}}.
-  \item Loads the exported edge list files.
-  \item Computes rewiring scores using \code{\link{compute_rewiring}}.
-  \item Loads rewiring scores and computes summary statistics with
-    \code{\link{compute_statistics}}.
+\item Extracts settings (dataset, database, group, time points, labels).
+\item Creates output directories if they do not exist.
+\item Constructs networks for the specified group and time points via
+\code{\link{network_construction}}.
+\item Loads the exported edge list files.
+\item Computes rewiring scores using \code{\link{compute_rewiring}}.
+\item Loads rewiring scores and computes summary statistics with
+\code{\link{compute_statistics}}.
 }
 
 The results are written into the \code{output_dir} specified in the \code{gene_network} object, under dataset- and database-specific folders.

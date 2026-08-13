@@ -1,20 +1,20 @@
 #' Gene co-expression network class
 #'
-#' A class to represent a pathway-specific gene co-expression network for estimating network rewiring in two time points.
+#' An S4 class to represent a pathway-specific gene co-expression network for estimating network rewiring in two time points.
 #'
-#' @slot group_name Name of the group to analyze (e.g. HC, Patients)
-#' @slot timepoints Vector of timepoints to analyze (numeric or character)
-#' @slot gene_intensities Matrix of gene expression data, where rows are genes and columns are sample or subject IDs
-#' @slot metadata Data frame of sample metadata describing the samples, including group, time, subject IDs
-#' @slot pathways Data frame of pathway/gene sets
-#' @slot output_dir Path to the output directory
-#' @slot dataset The name or accession ID of the dataset
-#' @slot database Name of database (KEGG or GO)
-#' @slot group_col Column name in `metadata` representing group
-#' @slot subjects_ids Column name in `metadata` representing subjects IDs
-#' @slot sample_ids Column name in `metadata` representing sample IDs
-#' @slot time_col Column name in `metadata` representing timepoints
-#' @slot time_labels Optional labels for timepoints to use in file names
+#' @slot group_name Name of the group to analyze (e.g. HC, Patients) and should match a value in \code{metadata[[group_col]]}.
+#' @slot timepoints Vector of time points to analyze (numeric or character) e.g. \code{c(1,2)} and values should match entries in \code{metadata[[time_col]]}.
+#' @slot gene_intensities Matrix of gene expression data, where rows are genes and columns are sample IDs as in \code{metadata[[sample_ids]]}.
+#' @slot metadata Data frame of sample metadata describing the samples, including group, time, subject IDs, and sample IDs.
+#' @slot pathways Data frame of pathway/gene sets.
+#' @slot output_dir Path to the output directory. It will be created automatically if not existing.
+#' @slot dataset The name or accession ID of the dataset, used to label output files.
+#' @slot database Name of database (KEGG or GO).
+#' @slot group_col Column name in `metadata` representing group.
+#' @slot subjects_ids Column name in `metadata` representing subjects IDs.
+#' @slot sample_ids Column name in `metadata` representing sample IDs.
+#' @slot time_col Column name in `metadata` representing time points.
+#' @slot time_labels Labels for time points to use in file names.
 #' @export
 setClass("gene_network",
          slots = list(
@@ -34,25 +34,25 @@ setClass("gene_network",
          ))
 
 
-#' Generic for select_group_intensities
+#' Extract intensities for a group, matched across time points
 #'
-#' @param object An object
+#' @param object A \code{gene_network} object.
 #' @export
 setGeneric("select_group_intensities", function(object,...) {
   standardGeneric("select_group_intensities")
 })
 
-#' Generic for network_construction
+#' Create gene co-expression networks from selected intensities
 #'
-#' @param object An object
+#' @param object A \code{gene_network} object.
 #' @export
 setGeneric("network_construction", function(object) {
   standardGeneric("network_construction")
 })
 
-#' Generic for compute_rewiring
+#' Compute gene rewiring between time points
 #'
-#' @param object An object
+#' @param object A \code{gene_network} object.
 #' @export
 setGeneric("compute_rewiring", function(object,...) {
   standardGeneric("compute_rewiring")
@@ -60,7 +60,7 @@ setGeneric("compute_rewiring", function(object,...) {
 
 #' Select group intensities
 #'
-#' Extract gene intensities for a given group across two timepoints.
+#' Extract gene intensities for a given group across two time points.
 #'
 #' @param object A \code{gene_network} object.
 #'
@@ -80,20 +80,20 @@ setMethod("select_group_intensities", "gene_network",
               stop(sprintf("Metadata is missing required column(s): %s",
                            paste(missing_cols, collapse = ", ")))
             }
-            #Ensure at least two timepoints are given
-            if (length(timepoints) < 2) stop("At least two timepoints are required")
+            #Ensure at least two time points are given
+            if (length(timepoints) < 2) stop("At least two time points are required")
 
             # Labels for output
             labels <- if (!is.null(object@time_labels)) object@time_labels else timepoints
 
-            # Extract subjects per timepoint
+            # Extract subjects per time point
             subjects_by_time <- lapply(timepoints, function(tp) {
               subset <- ids[
                 ids[[object@group_col]] == group_name &
                   ids[[object@time_col]] == tp, , drop = FALSE
               ]
               if (nrow(subset) == 0) {
-                warning(sprintf("No samples found for group '%s' at timepoint '%s'", group_name, tp))
+                warning(sprintf("No samples found for group '%s' at time point '%s'", group_name, tp))
                 return(list(subjects = character(0), samples = character(0)))
               }
               list(
@@ -103,7 +103,7 @@ setMethod("select_group_intensities", "gene_network",
             })
             names(subjects_by_time) <- labels
 
-            # keep only subjects present at all timepoints
+            # keep only subjects present at all time points
             common_subjects <- Reduce(intersect, lapply(subjects_by_time, `[[`, "subjects"))
             subjects_by_time <- lapply(subjects_by_time, function(x) {
               keep_idx <- which(x$subjects %in% common_subjects)
@@ -115,7 +115,7 @@ setMethod("select_group_intensities", "gene_network",
               if (length(x$samples) == 0) return(NULL)
               sample_ids <- intersect(x$samples, colnames(gene_intensities))
               if (length(sample_ids) == 0) {
-                warning("No matching sample IDs found in gene_intensities for this timepoint")
+                warning("No matching sample IDs found in gene_intensities for this time point")
                 return(NULL)
               }
 
@@ -131,7 +131,7 @@ setMethod("select_group_intensities", "gene_network",
 
 #' Network construction
 #'
-#' Constructs adjacency networks for a given group and two timepoints.
+#' Constructs adjacency networks for a given group and two time points.
 #'
 #' @param object A \code{gene_network} object.
 #' @export
@@ -144,15 +144,15 @@ setMethod("network_construction", "gene_network",
             pathways <- object@pathways
             database <- object@database
 
-            #Ensure at least two timepoints are given
-            if (length(timepoints) < 2) stop("At least two timepoints are required")
+            #Ensure at least two time points are given
+            if (length(timepoints) < 2) stop("At least two time points are required")
 
             # Labels for output
             labels <- if (!is.null(object@time_labels)) object@time_labels else timepoints
             tp1_label <- labels[1]
             tp2_label <- labels[2]
 
-            # Get expression matrices for the group at each timepoint
+            # Get expression matrices for the group at each time point
             data_list <- select_group_intensities(object)
             group_1 <- data_list[[tp1_label]]
             group_2 <- data_list[[tp2_label]]
@@ -184,8 +184,8 @@ setMethod("network_construction", "gene_network",
               if (nrow(group_1_path) >= 2 && nrow(group_2_path) >= 2) {
 
                 # Compute adjacency
-                apath1 <- adjacency(t(group_1_path), type = "signed", power = 1)
-                apath2 <- adjacency(t(group_2_path), type = "signed", power = 1)
+                apath1 <- adjacency(t(group_1_path), type = "signed", power = 1, corFnc = "cor", corOptions = "use = 'p', method = 'spearman'")
+                apath2 <- adjacency(t(group_2_path), type = "signed", power = 1, corFnc = "cor", corOptions = "use = 'p', method = 'spearman'")
 
                 # Clean path name for filenames
                 if (grepl("/", path_name)){
@@ -214,7 +214,7 @@ setMethod("network_construction", "gene_network",
 
 #' Network rewiring
 #'
-#' Computes network rewiring for a given group and two timepoints.
+#' Computes network rewiring for a given group and two time points.
 #'
 #' @param object A \code{gene_network} object.
 #' @param edgelist_path Path to the directory containing edge list files
@@ -374,7 +374,7 @@ compare_multiple_networks <- function(x,top_mes) {
   return(dn_scores)
 }
 
-# Check if the data needs log-transformation
+#' Check if the data needs log-transformation
 #' @param intensities A numeric matrix of gene intensities.
 #' @return TRUE or FALSE of whether to proceed with log-transform
 #' @export
@@ -384,7 +384,7 @@ checkLog <- function(intensities){
   return(toLog)
 }
 
-# Normalize and/or log-transform expression data
+#' Normalize and/or log-transform expression data
 #' @param intensities A numeric matrix of gene intensities.
 #' @param norm Whether to normalize the data or not.
 #' @param log Whether to log-transform the data or not.
@@ -407,7 +407,7 @@ handleData <- function(intensities, norm = FALSE, log = FALSE){
   return(intensities)
 }
 
-# Remove duplicate genes (general)
+#' Remove duplicate genes (general)
 #' @param eset A numeric matrix of gene intensities.
 #' @param column_of_symbol The columns name of gene symbols
 #' @return A numeric matrix of the same dimensions without duplicate acquisitions.
@@ -436,7 +436,7 @@ remove_duplicate_genes <- function(eset, column_of_symbol = "GeneSymbol", method
   return(result)
 }
 
-# Handle negatives
+#' Handle negatives
 #' @param intensities A numeric matrix of gene intensities.
 #' @return A numeric matrix or vector of the same dimensions with all values shifted to be positive.
 #' @export
@@ -464,8 +464,8 @@ cureNegative <- function(intensities){
 #' @param platform_sep Character. Field separator in the platform file. Default is tab ("\t").
 #' @param trim_cols Character vector. Column names in the platform to trim whitespace from. Default is NULL.
 #' @param numeric_cols Character vector. Column names in the platform to convert to numeric. Default is NULL.
-#' @param gene_synonyms Logical. If TRUE, the synonyms are handled. Default FALSE
-#' @return Data frame of cleaned gene intensities with Entrez IDs as rownames
+#' @param gene_synonyms Logical. If TRUE, the synonyms are handled. Default FALSE.
+#' @return Data frame of cleaned gene intensities with Entrez IDs as rownames.
 #' @export
 prepare_gene_intensities <- function(norm = FALSE,
          log = FALSE,
@@ -606,7 +606,7 @@ prepare_gene_intensities <- function(norm = FALSE,
 #' Compute summary statistics from rewiring scores
 #'
 #' @param scores The rewiring scores
-#' @param filename The filename corresponding to the group and timepoint label).
+#' @param filename The filename corresponding to the group and time point label).
 #' @param dataset The dataset name
 #' @param output.folder Path to output directory
 #' @param pathways The pathway names
@@ -686,9 +686,9 @@ compute_statistics <- function(scores, filename, dataset, output.folder, pathway
 #' @details
 #' The pipeline performs the following steps:
 #' \enumerate{
-#'   \item Extracts settings (dataset, database, group, timepoints, labels).
+#'   \item Extracts settings (dataset, database, group, time points, labels).
 #'   \item Creates output directories if they do not exist.
-#'   \item Constructs networks for the specified group and timepoints via
+#'   \item Constructs networks for the specified group and time points via
 #'     \code{\link{network_construction}}.
 #'   \item Loads the exported edge list files.
 #'   \item Computes rewiring scores using \code{\link{compute_rewiring}}.

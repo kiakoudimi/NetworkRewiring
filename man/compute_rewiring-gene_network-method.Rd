@@ -17,5 +17,5 @@
 Export the rewiring scores for each pathway.
 }
 \description{
-Computes network rewiring for a given group and two timepoints.
+Computes network rewiring for a given group and two time points.
 }

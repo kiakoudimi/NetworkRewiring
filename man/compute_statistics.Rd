@@ -9,7 +9,7 @@ compute_statistics(scores, filename, dataset, output.folder, pathways)
 \arguments{
 \item{scores}{The rewiring scores}
 
-\item{filename}{The filename corresponding to the group and timepoint label).}
+\item{filename}{The filename corresponding to the group and time point label).}
 
 \item{dataset}{The dataset name}
 

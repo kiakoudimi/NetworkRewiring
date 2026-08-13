@@ -26,7 +26,7 @@ prepare_gene_intensities(
 
 \item{log}{Logical. If TRUE, the method will log2-transform the data if necessary. Default FALSE}
 
-\item{series_matrix_file}{Character. Path to the raw series matrix file. Optional if the matrix is already in `gene_intensities`.}
+\item{series_matrix_file}{Character. Path to the raw series matrix file. Optional if the matrix is already in \code{gene_intensities}.}
 
 \item{platform_file}{Character. Path to the platform file mapping probes to gene symbols and Entrez IDs. Required for mapping.}
 
@@ -48,10 +48,10 @@ prepare_gene_intensities(
 
 \item{numeric_cols}{Character vector. Column names in the platform to convert to numeric. Default is NULL.}
 
-\item{gene_synonyms}{Logical. If TRUE, the synonyms are handled. Default FALSE}
+\item{gene_synonyms}{Logical. If TRUE, the synonyms are handled. Default FALSE.}
 }
 \value{
-Data frame of cleaned gene intensities with Entrez IDs as rownames
+Data frame of cleaned gene intensities with Entrez IDs as rownames.
 }
 \description{
 Cleans a raw gene expression matrix, handles multiple probes mapping to the same gene, ensures data are normalized and log-transformed, and maps gene symbols to Entrez IDs.

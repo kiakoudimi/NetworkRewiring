@@ -2,13 +2,13 @@
 % Please edit documentation in R/functions.R
 \name{compute_rewiring}
 \alias{compute_rewiring}
-\title{Generic for compute_rewiring}
+\title{Compute gene rewiring between time points}
 \usage{
 compute_rewiring(object, ...)
 }
 \arguments{
-\item{object}{An object}
+\item{object}{A \code{gene_network} object.}
 }
 \description{
-Generic for compute_rewiring
+Compute gene rewiring between time points
 }

@@ -10,5 +10,5 @@
 \item{object}{A \code{gene_network} object.}
 }
 \description{
-Constructs adjacency networks for a given group and two timepoints.
+Constructs adjacency networks for a given group and two time points.
 }

@@ -14,17 +14,21 @@ Reads a gene-to-GO mapping file and constructs a table of biological
 processes with their associated gene sets.
 }
 \details{
-The input file `gene_attribute_edges.txt` must contain at least the
+The input file \code{gene_attribute_edges.txt} must contain at least the
 following columns:
-- `GO.Biological.Process`: Biological process name
-- `Gene.ID`: Entrez gene ID or equivalent identifier
+\itemize{
+\item \code{GO.Biological.Process}: Biological process name
+\item \code{Gene.ID}: Entrez gene ID or equivalent identifier
+}
 
 The function aggregates all genes per process, counts them, and
-outputs a `data.frame` with:
-- `Total`: Number of genes in the process
-- `Process`: Process name
-- `Entrez_ID`: Comma-separated list of genes
-- Extra columns: Each gene in a separate column (wide format)
+outputs a \code{data.frame} with:
+\itemize{
+\item \code{Total}: Number of genes in the process
+\item \code{Process}: Process name
+\item \code{Entrez_ID}: Comma-separated list of genes
+\item Extra columns: Each gene in a separate column (wide format)
+}
 
-Finally, the result is saved as `biological_processes.RData`.
+Finally, the result is saved as \code{biological_processes.RData}.
 }

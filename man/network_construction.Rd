@@ -2,13 +2,13 @@
 % Please edit documentation in R/functions.R
 \name{network_construction}
 \alias{network_construction}
-\title{Generic for network_construction}
+\title{Create gene co-expression networks from selected intensities}
 \usage{
 network_construction(object)
 }
 \arguments{
-\item{object}{An object}
+\item{object}{A \code{gene_network} object.}
 }
 \description{
-Generic for network_construction
+Create gene co-expression networks from selected intensities
 }

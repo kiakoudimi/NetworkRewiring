@@ -5,35 +5,35 @@
 \alias{gene_network-class}
 \title{Gene co-expression network class}
 \description{
-A class to represent a pathway-specific gene co-expression network for estimating network rewiring in two time points.
+An S4 class to represent a pathway-specific gene co-expression network for estimating network rewiring in two time points.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{group_name}}{Name of the group to analyze (e.g. HC, Patients)}
+\item{\code{group_name}}{Name of the group to analyze (e.g. HC, Patients) and should match a value in \code{metadata[[group_col]]}.}
 
-\item{\code{timepoints}}{Vector of timepoints to analyze (numeric or character)}
+\item{\code{timepoints}}{Vector of time points to analyze (numeric or character) e.g. \code{c(1,2)} and values should match entries in \code{metadata[[time_col]]}.}
 
-\item{\code{gene_intensities}}{Matrix of gene expression data, where rows are genes and columns are sample or subject IDs}
+\item{\code{gene_intensities}}{Matrix of gene expression data, where rows are genes and columns are sample IDs as in \code{metadata[[sample_ids]]}.}
 
-\item{\code{metadata}}{Data frame of sample metadata describing the samples, including group, time, subject IDs}
+\item{\code{metadata}}{Data frame of sample metadata describing the samples, including group, time, subject IDs, and sample IDs.}
 
-\item{\code{pathways}}{Data frame of pathway/gene sets}
+\item{\code{pathways}}{Data frame of pathway/gene sets.}
 
-\item{\code{output_dir}}{Path to the output directory}
+\item{\code{output_dir}}{Path to the output directory. It will be created automatically if not existing.}
 
-\item{\code{dataset}}{The name or accession ID of the dataset}
+\item{\code{dataset}}{The name or accession ID of the dataset, used to label output files.}
 
-\item{\code{database}}{Name of database (KEGG or GO)}
+\item{\code{database}}{Name of database (KEGG or GO).}
 
-\item{\code{group_col}}{Column name in `metadata` representing group}
+\item{\code{group_col}}{Column name in \code{metadata} representing group.}
 
-\item{\code{subjects_ids}}{Column name in `metadata` representing subjects IDs}
+\item{\code{subjects_ids}}{Column name in \code{metadata} representing subjects IDs.}
 
-\item{\code{sample_ids}}{Column name in `metadata` representing sample IDs}
+\item{\code{sample_ids}}{Column name in \code{metadata} representing sample IDs.}
 
-\item{\code{time_col}}{Column name in `metadata` representing timepoints}
+\item{\code{time_col}}{Column name in \code{metadata} representing time points.}
 
-\item{\code{time_labels}}{Optional labels for timepoints to use in file names}
+\item{\code{time_labels}}{Labels for time points to use in file names.}
 }}
 
