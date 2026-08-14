@@ -40,9 +40,9 @@ prepare_gene_intensities(
 
 \item{platform_skip}{Integer. Number of lines to skip at the start of the platform file.}
 
-\item{series_sep}{Character. Field separator in the series matrix file. Default is tab ("\t").}
+\item{series_sep}{Character. Field separator in the series matrix file. Default is tab.}
 
-\item{platform_sep}{Character. Field separator in the platform file. Default is tab ("\t").}
+\item{platform_sep}{Character. Field separator in the platform file. Default is tab.}
 
 \item{trim_cols}{Character vector. Column names in the platform to trim whitespace from. Default is NULL.}
 

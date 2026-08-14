@@ -17,22 +17,22 @@ is perturbed between in those time points.
 (clean proves, map gene names, normalization/log2-transform) -- if input data are already prepared skip or use the following \code{\link{checkLog}},
 \code{\link{handleData}}, \code{\link{cureNegative}}, and \code{\link{remove_duplicate_genes}} as needed.
 \item \strong{Build a \code{gene_networks} object} that includes the data matrix, sample metadata, pathway classifications, and the group and timepoints to be compared.
-\prefformatted{
-net <- new("gene_network",
-gene_intensities = gi,                  #genes x samples matrix
-group_name       = 'Healthy',           #group name
-timepoints       = c(1,2),              #two time points
-metadata         = metadata df,
-output_dir       = 'path/to/results/',
-dataset          = 'GSEXXXXX',
-database         = 'KEGG',              #or GO
-pathways         = pathways,
-group_col        = "Group",             #group name in metadata
-subjects_ids     = "id",
-sample_ids       = "ID",
-time_col         = "Day",
-time_labels      = c('Day1', 'Day2))
-}
+\preformatted{
+   net <- new("gene_network",
+             gene_intensities = gi,                  #genes x samples matrix
+             group_name       = 'Healthy',           #group name
+             timepoints       = c(1,2),              #two time points
+             metadata         = metadata df,
+             output_dir       = 'path/to/results/',
+             dataset          = 'GSEXXXXX',
+             database         = 'KEGG',              #or GO
+             pathways         = pathways,
+             group_col        = "Group",             #group name in metadata
+             subjects_ids     = "id",
+             sample_ids       = "ID",
+             time_col         = "Day",
+             time_labels      = c('Day1', 'Day2))
+   }
 \item \strong{Run pipeline}:
 \preformatted{run_analyses(net)}
 This will call internally a) \code{\link{network_construction}} to build adjacency networks per time point and export edge lists
