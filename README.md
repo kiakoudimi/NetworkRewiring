@@ -2,7 +2,7 @@
 
 R package for quantiying pathway perturbations in gene co-expression networks between two timepoints. 
 
-![Pipeline overview](man/graphical_abstract.png)
+![Pipeline overview](figures/graphical_abstract.png)
 
 ## Features
 

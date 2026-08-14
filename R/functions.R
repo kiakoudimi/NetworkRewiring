@@ -460,8 +460,8 @@ cureNegative <- function(intensities){
 #' @param entrez_col Character. Column name in the platform file containing Entrez IDs. Default is "ENTREZ_GENE_ID".
 #' @param series_skip Integer. Number of lines to skip at the start of the series matrix file.
 #' @param platform_skip Integer. Number of lines to skip at the start of the platform file.
-#' @param series_sep Character. Field separator in the series matrix file. Default is tab ("\t").
-#' @param platform_sep Character. Field separator in the platform file. Default is tab ("\t").
+#' @param series_sep Character. Field separator in the series matrix file. Default is tab.
+#' @param platform_sep Character. Field separator in the platform file. Default is tab.
 #' @param trim_cols Character vector. Column names in the platform to trim whitespace from. Default is NULL.
 #' @param numeric_cols Character vector. Column names in the platform to convert to numeric. Default is NULL.
 #' @param gene_synonyms Logical. If TRUE, the synonyms are handled. Default FALSE.
